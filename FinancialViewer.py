@@ -12,13 +12,73 @@ __author__: 'Brandon Dos Remedios | git: @bdosremedios'
 
 
 class BankingHistory():
-    """
-    
+    """ Object containing calculated history of banking account with seperated
+    chequing, saving, and total banking, and method for generating a summary
+    of it.
+
+    Attributes
+    ---
+    initial_cheq_balance : float
+        Initial balance in chequing account.
+    initial_save_balance : float
+        Initial balance in saving account.
+    initial_bank_balance : float
+        Initial balance in banking account.
+    cheq_days : list of datetime.datetime
+        Days of chequing account transactions.
+    cheq_daily_changes : list of tuple(datetime.datetime, float)
+        List of tuples of dates and changes to chequing account on date.
+    cheq_daily_balances : list of tuple(datetime.datetime, float)
+        List of tuples of dates and balance of chequing account on date.
+    cheq_months : list of datetime.datetime
+        Months of chequing account transactions.
+    cheq_monthly_changes : list of tuple(datetime.datetime, float)
+        List of tuples of months and changes to chequing account on month.
+    cheq_initial_monthly_balances : list of tuple(datetime.datetime, float)
+        List of tuples of months and changes to chequing account on month.
+    save_days : list of datetime.datetime
+        Days of saving account transactions.
+    save_daily_changes : list of tuple(datetime.datetime, float)
+        List of tuples of dates and changes to saving account on date.
+    save_daily_balances : list of tuple(datetime.datetime, float)
+        List of tuples of dates and balance of saving account on date.
+    save_months : list of datetime.datetime
+        Months of saving account transactions.
+    save_monthly_changes : list of tuple(datetime.datetime, float)
+        List of tuples of months and changes to saving account on month.
+    save_initial_monthly_balances : list of tuple(datetime.datetime, float)
+        List of tuples of months and changes to saving account on month.
+    bank_days : list of datetime.datetime
+        Days of banking account transactions.
+    bank_daily_changes : list of tuple(datetime.datetime, float)
+        List of tuples of dates and changes to banking account on date.
+    bank_daily_balances : list of tuple(datetime.datetime, float)
+        List of tuples of dates and balance of banking account on date.
+    bank_months : list of datetime.datetime
+        Months of banking account transactions.
+    bank_monthly_changes : list of tuple(datetime.datetime, float
+        List of tuples of months and changes to banking account on month.
+    bank_initial_monthly_balances : list of tuple(datetime.datetime, float)
+        List of tuples of months and changes to banking account on month.
 
     """
     def __init__(self, initial_chequing, initial_saving, chequing_csv,
                  saving_csv):
+        """ Carries out calculation of banking history, for daily and monthly
+        increments, for chequing, saving, and banking accounts.
 
+        Parameters
+        ---
+        initial_chequing : float
+            Initial balance in chequing account.
+        initial_saving : float
+            Initial balance in saving account.
+        chequing_csv : str
+            Path to csv of transactions to and from chequing account.
+        saving_csv : str
+            Path to csv of transactions to and from saving account.
+
+        """
         # Initial balance for both accounts on first day of transaction
         # history (balance listed alongside that first day after changes)
         self.initial_cheq_balance = initial_chequing
@@ -36,7 +96,7 @@ class BankingHistory():
         save_days, save_changes = self.extract_datetime_accountchange(
                 saving_csvs)
 
-        # Collapse all dates and changes to a total account change on each date
+        # Collapse dates and changes to a total account change on each date
         cheq_unique_days, cheq_daily_changes = self.collapse_date_change(
                 cheq_days, cheq_changes)
         save_unique_days, save_daily_changes = self.collapse_date_change(
@@ -103,7 +163,7 @@ class BankingHistory():
         bank_days = self.cheq_days + self.save_days
         bank_changes = self.cheq_daily_changes + self.save_daily_changes
 
-        # Collapse all dates and changes to a total account change on each date
+        # Collapse dates and changes to a total account change on each date
         bank_unique_days, bank_daily_changes = self.collapse_date_change(
                 bank_days, bank_changes)
 
@@ -163,7 +223,6 @@ class BankingHistory():
         dates_list : list
             List of datetime.datetime objects of all transaction dates, in
             same order as changes_list.
-
         changes_list : list
             List of floats of all account changes on dates, in same order as
             dates_list.
@@ -179,17 +238,16 @@ class BankingHistory():
         return(dates_list, changes_list)
 
     def collapse_date_change(self, list_of_dates, list_of_changes):
-        """ Take a list of dates and account changes on that date, and collapse
-        them into a list of unique dates, and the total account change on
-        each unique date. In other words grabbing daily changes, and dates of
-        those changes.
+        """ Take a list of dates and account changes on that date, and
+        collapse them into a list of unique dates, and the total account
+        change on each unique date. In other words grabbing daily changes, and
+        dates of those changes.
 
         Parameters
         ---
         list_of_dates : list
             List of datetime.datetime objects representing the date of each
             account change in list_of_changes.
-
         list_of_changes : list
             List of floats representing change in account balance on each day.
 
@@ -198,7 +256,6 @@ class BankingHistory():
         collapsed_dates : list
             List of datetime.datetime objects representing unique dates in
             list_of_dates. Sorted in increasing time order.
-
         collapsed_changes : list
             List of floats of total account changes on dates.
 
@@ -223,16 +280,14 @@ class BankingHistory():
         return(collapsed_dates, collapsed_changes)
 
     def fill_no_transact_days(self, list_of_dates, list_of_changes):
-        """
-        Fills in non listed days (dates with no transactions) to make plotting
-        and monthly time intervals more consistent.
+        """ Fills in non listed days (dates with no transactions) to make
+        plotting and monthly time intervals more consistent.
 
         Parameters
         ---
         list_of_dates : list
             List of datetime.datetime objects representing the date of each
             account change in list_of_changes.
-
         list_of_changes : list
             List of floats of total account changes on dates, in same order
             as list_of_dates.
@@ -242,7 +297,6 @@ class BankingHistory():
         all_days : list
             List of datetime.datetime objects, similar to list_of_dates but
             with no gaps between transaction dates.
-
         all_changes : list
             List of floats of total account changes on dates, with no
             transaction dates with a 0. value.
@@ -271,15 +325,13 @@ class BankingHistory():
         return(all_days, all_changes)
 
     def convert_changes_to_balances(self, initial_balance, list_of_changes):
-        """
-        Converts list of floats representing account changes, into the balance
-        in the account at the time.
+        """ Converts list of floats representing account changes, into the
+        balance in the account at the time.
 
         Parameters
         ---
         initial_balance : float
             Amount in account before any changes in list_of_changes.
-
         list_of_changes : list
             List of floats representing changes to account on each day.
 
@@ -302,7 +354,28 @@ class BankingHistory():
 
     def get_monthly_change_balance(self, list_of_dates, list_of_changes,
                                    list_of_balances):
-        """
+        """ Collapse daily account changes and balances, into a monthly
+        account changes and balances.
+
+        Parameters
+        ---
+        list_of_dates : list of datetime.datetime
+            List of dates corresponding to account changes and balances.
+        list_of_changes : list of float
+            List of account changes.
+        list_of_balances : list of float
+            List of account balances.
+
+        Returns
+        ---
+        sorted_unique_month_years : list of datetime.datetime
+            List of dates of months for each months' account changes and
+            balances.
+        monthly_account_changes
+            List of total monthly account changes.
+        monthly_account_balances
+            List of initial monthly account balances
+
         """
         # Zip dates to changes and balances, and convert dates into just month
         # and year, with day for all set to the first of the month.
@@ -359,37 +432,49 @@ class BankingHistory():
 
         fig = plt.figure(figsize=(12, 18))
         spec = gridspec.GridSpec(ncols=2, nrows=4, figure=fig)
-        
+
+        # Plot title axes stating initial and final balances for accounts
         title_ax = fig.add_subplot(spec[0, 0:2])
         title_ax.grid(False)
         title_ax.text(0., 1., 'Financial Summary', fontsize=50)
-        title_ax.text(.02, .9, 'Created on {}'.format(
-            datetime.datetime.strftime(datetime.datetime.now(),
-                                       '%A, %B %d %Y %H:%M:%S')
-            ), fontsize=14)
+        title_ax.text( .02, .9,
+                      'Created on {}'.format(
+                          datetime.datetime.strftime(
+                              datetime.datetime.now(),
+                              '%A, %B %d %Y %H:%M:%S')),
+                      fontsize=14)
         title_ax.text(.02, .65, 'Initial Balance', fontsize=20)
         title_ax.text(.02, .55, 'Initial Date: {}'.format(
             datetime.datetime.strftime(self.bank_days[0],
-                                       '%A, %B %d %Y')), fontsize=14, va='top')
-        title_ax.text(.02, .45, 'Chequing: {}'.format(self.cheq_daily_balances[0]),
+                                       '%A, %B %d %Y')),
+            fontsize=14, va='top')
+        title_ax.text(.02, .45,
+                      'Chequing: {}'.format(self.cheq_daily_balances[0]),
                       fontsize=14, va='top')
-        title_ax.text(.02, .35, 'Saving: {}'.format(self.save_daily_balances[0]),
+        title_ax.text(.02, .35,
+                      'Saving: {}'.format(self.save_daily_balances[0]),
                       fontsize=14, va='top')
-        title_ax.text(.02, .25, 'Total: {}'.format(self.bank_daily_balances[0]),
+        title_ax.text(.02, .25,
+                      'Total: {}'.format(self.bank_daily_balances[0]),
                       fontsize=14, va='top')
         title_ax.text(.51, .65, 'Final Balance', fontsize=20)
         title_ax.text(.51, .55, 'Final Date: {}'.format(
             datetime.datetime.strftime(self.bank_days[-1],
-                                       '%A, %B %d %Y')), fontsize=14, va='top')
-        title_ax.text(.51, .45, 'Chequing: {}'.format(self.cheq_daily_balances[-1]),
+                                       '%A, %B %d %Y')),
+            fontsize=14, va='top')
+        title_ax.text(.51, .45,
+                      'Chequing: {}'.format(self.cheq_daily_balances[-1]),
                       fontsize=14, va='top')
-        title_ax.text(.51, .35, 'Saving: {}'.format(self.save_daily_balances[-1]),
+        title_ax.text(.51, .35,
+                      'Saving: {}'.format(self.save_daily_balances[-1]),
                       fontsize=14, va='top')
-        title_ax.text(.51, .25, 'Total: {}'.format(self.bank_daily_balances[-1]),
+        title_ax.text(.51, .25,
+                      'Total: {}'.format(self.bank_daily_balances[-1]),
                       fontsize=14, va='top')
         title_ax.tick_params(axis='both', labelbottom=False, labelleft=False,
                              left=False, bottom=False)
-        
+
+        # Plot changes to chequing account to give an idea on general spending
         cheq_change_ax = fig.add_subplot(spec[1, 0:2])
         cheq_change_ax.bar(
             np.array(self.cheq_months)[np.array(self.cheq_monthly_changes)>0],
@@ -402,32 +487,39 @@ class BankingHistory():
                 np.array(self.cheq_monthly_changes)<0],
                 12, color=Category20_20[6])
         cheq_change_ax.bar(
-            np.array(self.cheq_months)[np.array(self.cheq_monthly_changes)==0],
+            np.array(self.cheq_months)[
+                np.array(self.cheq_monthly_changes)==0],
             np.array(self.cheq_monthly_changes)[
                 np.array(self.cheq_monthly_changes)==0],
                 12, color=Category20_20[0])
         cheq_change_ax.set_ylabel('Chequing Account Changes')
         cheq_change_ax.margins(x=0.025)
-        
+
+        # Plot changes to entire banking account to see general change trend
+        # in easier colored visual (More green is good, more red is bad)
         bank_change_ax = fig.add_subplot(spec[2, 0:2])
         bank_change_ax.bar(
-            np.array(self.bank_months)[np.array(self.bank_monthly_changes)>0],
+            np.array(self.bank_months)[
+                np.array(self.bank_monthly_changes)>0],
             np.array(self.bank_monthly_changes)[
                 np.array(self.bank_monthly_changes)>0],
                 12, color=Category20_20[4])
         bank_change_ax.bar(
-            np.array(self.bank_months)[np.array(self.bank_monthly_changes)<0],
+            np.array(self.bank_months)[
+                np.array(self.bank_monthly_changes)<0],
             np.array(self.bank_monthly_changes)[
                 np.array(self.bank_monthly_changes)<0],
                 12, color=Category20_20[6])
         bank_change_ax.bar(
-            np.array(self.bank_months)[np.array(self.bank_monthly_changes)==0],
+            np.array(self.bank_months)[
+                np.array(self.bank_monthly_changes)==0],
             np.array(self.bank_monthly_changes)[
                 np.array(self.bank_monthly_changes)==0],
                 12, color=Category20_20[0])
         bank_change_ax.set_ylabel('Total Bank Changes')
         bank_change_ax.margins(x=0.025)
 
+        # Plot monthly bank balances to see general trajectory of finances
         bank_bal_ax = fig.add_subplot(spec[3, 0:2])
         bank_bal_ax.bar(
             self.bank_months, self.bank_initial_monthly_balances, 12,
@@ -451,7 +543,8 @@ class BankingHistory():
                     '({}).pdf'.format(increment_count))
                 increment_count += 1
         plt.savefig(initial_pdf_path)
-        
+
+
 class InitialInformationApp():
 
     def __init__(self, parent):
@@ -632,18 +725,18 @@ class InitialInformationApp():
                     self.cheqbal, self.savebal, self.cheqcsv, self.savecsv,
                     self.pdfdir))
                 f.close()
-        
+
                 # Create banking history object containing data for plotting
                 banking_hist = BankingHistory(
                     self.cheqbal, self.savebal, self.cheqcsv, self.savecsv)
-        
+
                 # Save plot to given path
                 banking_hist.plot_pdf(self.pdfdir)
 
                 # User feedback of successful plot generation
                 messagebox.showinfo('Success',
                                     'Financial summary generated.')
-                
+
         else:
             self.generateerrormessage(
                 cheqbalvalid, savebalvalid, cheqcsvvalid, savecsvvalid,
@@ -683,7 +776,7 @@ class InitialInformationApp():
         if not pdfdirvalid:
             error_message += ('Entry of directory to save pdf, must exist.\n')
 
-        messagebox.showinfo('Entry Error', error_message)
+        messagebox.showerror('Entry Error', error_message)
 
 if __name__ == '__main__':
     # Initiate initial information entry GUI application and activate pdf
