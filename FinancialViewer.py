@@ -1,5 +1,6 @@
 import datetime
 import os
+import pandas as pd
 import numpy as np
 import tkinter as tk
 import matplotlib.pyplot as plt
@@ -85,10 +86,12 @@ class BankingHistory():
         self.initial_save_balance = initial_saving
         
         # Load transaction history for each account
-        chequing_csvs = np.genfromtxt(
-            chequing_csv, delimiter=',', dtype=None, encoding=None)
-        saving_csvs = np.genfromtxt(
-            saving_csv, delimiter=',', dtype=None, encoding=None)
+        chequing_csvs = pd.read_csv(chequing_csv)
+        chequing_csvs = list(zip(list(chequing_csvs.iloc[:, 0]),
+                                 list(chequing_csvs.iloc[:, 1])))
+        saving_csvs = pd.read_csv(saving_csv)
+        saving_csvs = list(zip(list(saving_csvs.iloc[:, 0]),
+                               list(saving_csvs.iloc[:, 1])))
 
         # Extract dates, and account changes on those dates
         cheq_days, cheq_changes = self.extract_datetime_accountchange(
@@ -230,7 +233,9 @@ class BankingHistory():
         """
         dates_list = []
         changes_list = []
-        for date_string, account_change, dump1, dump2, dump3 in csv_rows:
+        # Just grab date and account change
+        csv_rows = [(tup[0], tup[1]) for tup in csv_rows]
+        for date_string, account_change in csv_rows:
             date_temp = datetime.datetime.strptime(date_string, "%m/%d/%Y")
             dates_list.append(date_temp)
             changes_list.append(round(float(account_change), 2))
